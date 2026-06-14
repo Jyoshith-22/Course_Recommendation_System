@@ -27,50 +27,7 @@ An end-to-end Course Recommendation Engine that integrates **41K+ course listing
 
 ---
 
-## 📁 Repository Structure
 
-```
-├── DATASET/                  # Raw CSV files (Coursera, Udemy, edX, Skillshare)
-│   └── unified_courses.csv   # Automatically generated cleaned & merged dataset
-├── models/                   # Serialized ML models (SVD, TF-IDF matrices)
-├── app.py                    # Streamlit web application
-├── data_preprocessing.py     # Data pipeline to ingest, clean, and merge datasets
-├── recommendation_engine.py  # Algorithms, SVD training, and hybrid formula
-├── query_recommender.py      # Command-line utility to query recommendations
-├── Course_Recommender_Project.ipynb # Jupyter notebook with EDA and step-by-step analysis
-├── requirements.txt          # Python package dependencies
-└── README.md                 # Project documentation
-```
-
----
-
-## ⚡ Setup & Installation
-
-### 1. Clone the Repository
-```bash
-git clone <your-repository-url>
-cd <repository-directory>
-```
-
-### 2. Install Dependencies
-Ensure you have Python 3.8+ installed. Run:
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Build & Train the Models
-Before launching the application, process the datasets and train the recommendation models by running the pipeline script:
-```bash
-python recommendation_engine.py
-```
-This script will:
-*   Incorporate datasets from `DATASET/`.
-*   Clean duration formats and impute missing ratings.
-*   Generate the unified course catalogue (`unified_courses.csv`).
-*   Train SVD collaborative filters and generate the TF-IDF vocabulary.
-*   Save the model state files to the `models/` folder.
-
----
 
 ## 🖥️ Running the Applications
 
