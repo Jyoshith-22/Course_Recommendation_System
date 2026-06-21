@@ -4,7 +4,12 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from recommendation_engine import load_models, hybrid_recommend, generate_learning_path
+from recommendation_engine import (
+    load_models, hybrid_recommend, generate_learning_path,
+    load_unified_data, train_content_model,
+    generate_synthetic_ratings, train_collab_model, save_models,
+    MODEL_DIR
+)
 
 st.set_page_config(
     page_title="Course Recommender",
@@ -17,6 +22,21 @@ st.set_page_config(
 # ── cached model loader ─────────────────────────────────────────
 @st.cache_resource(show_spinner="Loading models...")
 def get_models():
+    tfidf_path = os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl")
+
+    # Models not found → train them on the fly (required on Streamlit Cloud)
+    if not os.path.exists(tfidf_path):
+        with st.spinner(
+            "⏳ First-time setup: training recommendation models "
+            "on 41K+ courses. This takes ~2-5 minutes…"
+        ):
+            df_raw = load_unified_data()
+            tfidf, tfidf_matrix, df = train_content_model(df_raw)
+            ratings_df = generate_synthetic_ratings(df)
+            svd, _ = train_collab_model(ratings_df)
+            save_models(tfidf, tfidf_matrix, svd, df, ratings_df)
+        return tfidf, tfidf_matrix, svd, df
+
     return load_models()
 
 
@@ -66,8 +86,8 @@ st.divider()
 # ── load models ─────────────────────────────────────────────────
 try:
     tfidf, tfidf_matrix, svd, df = get_models()
-except FileNotFoundError:
-    st.error("Models not found. Run `python recommendation_engine.py` first.")
+except Exception as e:
+    st.error(f"Failed to load or train models: {e}")
     st.stop()
 
 
